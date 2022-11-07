@@ -28,4 +28,5 @@ Route::delete('/animals/delete/{id}', [AnimalsController::class, 'destroy']);
 Route::get('/student', [StudentController::class, 'index']);
 Route::post('/student/store', [StudentController::class, 'store']);
 Route::put('/student/update/{id}', [StudentController::class, 'update']);
+Route::get('/student/detail/{id}', [StudentController::class, 'show']);
 Route::delete('/student/delete/{id}', [StudentController::class, 'destroy']);

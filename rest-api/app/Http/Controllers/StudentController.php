@@ -67,7 +67,24 @@ class StudentController extends Controller
      */
     public function show($id)
     {
-        //
+        $student = Student::find($id);
+
+        if ($student) {
+            $data = [
+                'message' => 'Get Detail Student',
+                'data' => $student
+            ];
+
+            return response()->json($data, 200);
+
+        } else {
+            $data = [
+                'message' => 'Student not found',
+            ];
+
+            return response()->json($data, 404);
+        }
+
     }
 
     /**
@@ -90,20 +107,36 @@ class StudentController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $data = Student::find($id);
+        $student = Student::find($id);
 
-        $data->update([
-            'nama' => $request->get('nama'),
-            'nim' => $request->get('nim'),
-            'email' => $request->get('email'),
-            'jurusan' => $request->get('jurusan')
-        ]);
+        if ($student) {
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post updated successfully',
-            'data' => $data,
-        ]);
+            $student->update([
+                'nama' => $request->get('nama'),
+                'nim' => $request->get('nim'),
+                'email' => $request->get('email'),
+                'jurusan' => $request->get('jurusan')
+            ]);
+
+            $data = [
+                'success' => true,
+                'message' => 'Post updated successfully',
+                'data' => $student,
+            ];
+
+            return response()->json($data, 200);
+
+        } else {
+
+            $data = [
+                'message' => 'Student Not Found',
+            ];
+
+            return response()->json($data, 404);
+        }
+
+
+
     }
 
     /**
@@ -114,16 +147,28 @@ class StudentController extends Controller
      */
     public function destroy($id)
     {
-        $data = Student::find($id);
+        $student = Student::find($id);
 
-        $data->delete();
+        if ($student) {
 
-        return response()->json([
-            'success' => true,
-            'message' => 'Post deleted successfully',
-            'data' => $data,
+            $student->delete();
 
+            $data = [
+                'success' => true,
+                'message' => 'Post deleted successfully',
+                'data' => $student,
+            ];
 
-        ]);
+            return response()->json($data, 200);
+
+        } else {
+
+            $data = [
+                'message' => 'Student Not Found',
+            ];
+
+            return response()->json($data, 404);
+        }
+
     }
 }
