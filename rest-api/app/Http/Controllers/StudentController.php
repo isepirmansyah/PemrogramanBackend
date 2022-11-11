@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Student;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 
 class StudentController extends Controller
 {
@@ -15,12 +16,26 @@ class StudentController extends Controller
     public function index()
     {
         $student = Student::all();
-        $data = [
-            'message' => 'Get All Student',
-            'data' => $student
-        ];
+        $row = $student->count();
 
-        return response()->json($data, 200);
+        if ($row != null) {
+
+            $data = [
+                'message' => 'Get All Student',
+                'data' => $student
+            ];
+
+            return response()->json($data, 200);
+
+        } else {
+
+            $data = [
+                'message' => 'Data not found',
+            ];
+
+            return response()->json($data, 404);
+        }
+
     }
 
     /**
@@ -41,14 +56,39 @@ class StudentController extends Controller
      */
     public function store(Request $request)
     {
-        $input = [
-            'nama' => $request->nama,
-            'nim' => $request->nim,
-            'email' => $request->email,
-            'jurusan' => $request->jurusan
-        ];
+        $rules = array(
+            'nama' => 'required',
+            'nim' => 'numeric|required',
+            'email' => 'email|required',
+            'jurusan' => 'required',
+        );
 
-        $student = Student::create($input);
+        $messages = array(
+            'nama.required' => 'nama tidak boleh kosong',
+            'nim.required' => 'nim tidak boleh kosong',
+            'nim.numeric' => 'nim harus berupa angka',
+            'email.required' => 'email tidak boleh kosong',
+            'email.email' => 'email harus berupa email yang valid',
+            'jurusan.required' => 'jurusan tidak boleh kosong'
+
+        );
+
+        $validator = Validator::make($request->all(), $rules, $messages);
+
+        if($validator->fails()) {
+            $messages = $validator->getMessageBag();
+            return response()->json(["messages" => $messages], 500);
+        }
+
+
+        $validatedData = $request->validate([
+            'nama' => 'required',
+            'nim' => 'numeric|required',
+            'email' => 'email|required',
+            'jurusan' => 'required',
+        ]);
+
+        $student = Student::create($validatedData);
 
         $data = [
             'success' => true,
@@ -56,7 +96,7 @@ class StudentController extends Controller
             'data' => $student,
         ];
 
-        return response()->json($data, 200);
+        return response()->json($data, 201);
     }
 
     /**
@@ -111,6 +151,30 @@ class StudentController extends Controller
 
         if ($student) {
 
+            $rules = array(
+                'nama' => 'required',
+                'nim' => 'numeric|required',
+                'email' => 'email|required',
+                'jurusan' => 'required',
+            );
+
+            $messages = array(
+                'nama.required' => 'nama tidak boleh kosong',
+                'nim.required' => 'nim tidak boleh kosong',
+                'nim.numeric' => 'nim harus berupa angka',
+                'email.required' => 'email tidak boleh kosong',
+                'email.email' => 'email harus berupa email yang valid',
+                'jurusan.required' => 'jurusan tidak boleh kosong'
+
+            );
+
+            $validator = Validator::make($request->all(), $rules, $messages);
+
+            if($validator->fails()) {
+                $messages = $validator->getMessageBag();
+                return response()->json(["messages" => $messages], 500);
+            }
+
             $student->update([
                 'nama' => $request->get('nama'),
                 'nim' => $request->get('nim'),
@@ -134,8 +198,6 @@ class StudentController extends Controller
 
             return response()->json($data, 404);
         }
-
-
 
     }
 
