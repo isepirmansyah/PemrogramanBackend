@@ -6,7 +6,7 @@
  * @hint - Gunakan Destructing Object
  */
 
- const {index, store, update, destroy}= require("./Controllers/FruitController.js");
+ const {index, store, update, destroy}= require("./controllers/BuahController.js");
 
  /**
   * NOTES:
